@@ -1,0 +1,29 @@
+@startuml
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+title Remote manage warm in home
+
+top to bottom direction
+
+Person(User, "User", "A user of the fitness club system")
+Person(Admin, "Admin", "An administrator managing the system")
+System(FitLifeSystem, "Manage warm and monitoring temperature", "Manage devices")
+
+Container_Boundary(FitLifeSystem, "FitLife System") {
+  Container(ManageWarm, "ManageWarm", "Java", "Allows users to manage their membership")
+  Container(MonitoringTemperature, "MonitoringTemperature", "Java", "Processes payments")
+  Container(Database, "Database", "PostgreSQL", "Stores user data and schedules")
+}
+
+System_Ext(ApiSensors, "Sensors", "External API for fitness data integration")
+
+Rel(Admin, ManageWarm,"Manages the system")
+Rel(User, MonitoringTemperature, "Uses the system")
+Rel(Admin, MonitoringTemperature,"Manages the system")
+Rel(User, ManageWarm,"Manages the system")
+Rel(MonitoringTemperature, Database,"Processes payment requests")
+Rel(ManageWarm,Database,"Reads/Writes user data")
+Rel(MonitoringTemperature,ApiSensors,"Fetches fitness data")
+
+@enduml
