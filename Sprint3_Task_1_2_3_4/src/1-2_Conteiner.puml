@@ -2,31 +2,36 @@
 
 !includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
 
-title Remote manage warm in home
+title Remote manage devices and monitoring telemetry in smart home
 
 top to bottom direction
 
-Person(User, "User", "A user of the fitness club system")
+Person(User, "User", "A user of the device")
 Person(Admin, "Admin", "An administrator managing the system")
-System(FitLifeSystem, "Manage warm and monitoring temperature", "Manage devices")
+System(DeviceTelemetrySystem, "Manage devices and monitoring telemetry", "Manage devices")
 
-Container_Boundary(FitLifeSystem, "FitLife System") {
-  Container(ApiGateway, "ApiGateway", "Java", "Allows users to manage their membership")
-  Container(ManageWarm, "ManageWarmService", "Java", "Allows users to manage their membership")
-  Container(MonitoringTemperature, "MonitoringTemperatureService", "Java", "Processes payments")
-  Container(DataBus, "DataBus", "Kafka", "Allows users to manage their membership")
-  Container(Database, "Database", "PostgreSQL", "Stores user data and schedules")
+Container_Boundary(DeviceTelemetrySystem, "Device Telemetry System") {
+  Container(ApiGateway, "ApiGateway", "Java", "Allows users to manage their device")
+  Container(DataBus, "DataBus", "Kafka", "Allows users to manage their device")
+  Container_Boundary(DeviceSystem, "Device  System") {
+    Container(ManageDevice, "ManageDeviceService", "Java", "Allows users to manage their device")
+    Container(DatabaseDevice, "Database", "PostgreSQL", "Stores device data")
+  }
+  Container_Boundary(TelemetrySystem, "Telemetry System") {
+    Container(ManageTelemetry, "ManageTelemetryService", "Java", "Processes telemetry")
+    Container(DatabaseTelemetry, "Database", "PostgreSQL", "Stores telemetry data")
+  }
 }
 
-System_Ext(ApiSensors, "ApiSensors", "External API for fitness data integration")
+System_Ext(ApiSensors, "ApiSensors", "External API for sensor data")
 
 Rel(Admin, ApiGateway,"Manages the system")
 Rel(User, ApiGateway, "Uses the system")
-Rel(ApiGateway, MonitoringTemperature,"Manages the system")
-Rel(ApiGateway, ManageWarm,"Manages the system")
-Rel(MonitoringTemperature, DataBus,"Processes payment requests")
-Rel(ManageWarm,DataBus,"Reads/Writes user data")
-Rel(DataBus, Database, "Processes payment requests")
-Rel(MonitoringTemperature,ApiSensors,"Fetches fitness data")
+Rel(ApiGateway, DataBus,"Manages the system")
+Rel(DataBus, ManageTelemetry, "Processes telemetry")
+Rel(DataBus, ManageDevice,"Reads/Writes user data")
+Rel(ManageTelemetry,ApiSensors,"Fetches fitness data")
+Rel(ManageDevice, DatabaseDevice, "Processes device")
+Rel(ManageTelemetry, DatabaseTelemetry, "Processes telemetry")
 
 @enduml
