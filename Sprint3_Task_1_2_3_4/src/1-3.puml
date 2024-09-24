@@ -60,7 +60,7 @@ class Module {
 User "1" -- "0..*" House : has
 House "1" -- "0..*" Device : includes
 Device "1" -- "0..*" Telemetry : has
-Device "1" -- "1" DeviceType : has
+DeviceType "1" -- "0..*" Device : has
 Device "1" -- "0..*" Module : has
 
 @enduml
